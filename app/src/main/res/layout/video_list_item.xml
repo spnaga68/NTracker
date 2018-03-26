@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="120dp">
+    <ImageView
+        android:id="@+id/video_thumb"
+        android:layout_width="150dp"
+        android:layout_height="90dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:scaleType="fitXY"
+        android:layout_gravity="center_vertical" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/video_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:maxLines="3"
+            android:textColor="#3d3d3d"
+            android:text="Hello Card this is the text where the typing of india and blaa blaa"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/video_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="29 sep"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

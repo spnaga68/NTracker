@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">NTracker</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="location_enable">Enable location</string>
+    <string name="change_network">Network error</string>
+    <string name="speed">Speed</string>
+    <string name="wait_time">Idle time</string>
+    <string name="r_fare">Fare</string>
+    <string name="waiting_time_txt">Idle Time</string>
+    <string name="fare_details">Fare Details</string>
+    <string name="minimum_fare">Minium Fare</string>
+    <string name="start_trip">Start</string>
+    <string name="distance_travelled">Distance Travelled</string>
+    <string name="time_travelled">Time Travelled</string>
+    <string name="estimated_arrival">Estimated Arrival</string>
+    <string name="reached">Hurray!  Reached desination.</string>
+    <string name="googleID">AIzaSyBJVmmo4vEPReV38xKxQXZpiRrN83CXMII</string>
+</resources>

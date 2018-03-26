@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "329956659854",
+    "firebase_url": "https://ntracker-daf8e.firebaseio.com",
+    "project_id": "ntracker-daf8e",
+    "storage_bucket": "ntracker-daf8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329956659854:android:8f255ed0132fbdff",
+        "android_client_info": {
+          "package_name": "pasu.ntracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329956659854-mre29kkr984c9pi3c7ak72nq02762h6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pasu.ntracker",
+            "certificate_hash": "ac3d59cc51a4e7cbcc234c5135f8c09721d51ed2"
+          }
+        },
+        {
+          "client_id": "329956659854-8fcnlo12mf3p14l8d26lu9dkaoedtehp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB51G7PmAe39Tn_n9ICa1LBJ0eU4kgS2mE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329956659854-8fcnlo12mf3p14l8d26lu9dkaoedtehp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

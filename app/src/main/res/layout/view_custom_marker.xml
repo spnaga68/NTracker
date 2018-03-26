@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/location_name"
+        android:layout_width="wrap_content"
+        android:background="@color/semi_transparent"
+        android:textColor="@color/transparent_bg_text"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:padding="8dp" />
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:background="@drawable/triangle"
+        android:rotation="180"/>
+</LinearLayout>
