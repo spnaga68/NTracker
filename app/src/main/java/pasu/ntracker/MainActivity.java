@@ -42,31 +42,32 @@ public class MainActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LocationActivity.class));
 //                VideoActivityMain
                 // Write a message to the database
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("trackDetail").push();
-                data = new Tracker();
-                data.setVechicleID("123");
-                data.setTrackID(myRef.getKey());
-                data.setPickuplat(pickuplat);
-                data.setPickuplng(pickuplng);
-                data.setDroplat(droplat);
-                data.setDroplng(droplng);
-                data.setTimeStarted(new Date().getTime());
-                myRef.setValue(data, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError == null) {
-                            SessionSave.saveSession(CommonData.TRACK_ID, databaseReference.getKey(), MainActivity.this);
-                            SessionSave.saveSession(CommonData.CURRENT_TRACK_INFO, CommonUtils.toJson(data), MainActivity.this);
-                            stop.setVisibility(View.VISIBLE);
-                            start.setVisibility(View.GONE);
-                            checkID();
-                            startActivity(new Intent(MainActivity.this, DriverMapActivity.class));
-                        }
-                    }
-                });
+//                FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                DatabaseReference myRef = database.getReference("trackDetail").push();
+//                data = new Tracker();
+//                data.setVechicleID("123");
+//                data.setTrackID(myRef.getKey());
+//                data.setPickuplat(pickuplat);
+//                data.setPickuplng(pickuplng);
+//                data.setDroplat(droplat);
+//                data.setDroplng(droplng);
+//                data.setTimeStarted(new Date().getTime());
+//                myRef.setValue(data, new DatabaseReference.CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        if (databaseError == null) {
+//                            SessionSave.saveSession(CommonData.TRACK_ID, databaseReference.getKey(), MainActivity.this);
+//                            SessionSave.saveSession(CommonData.CURRENT_TRACK_INFO, CommonUtils.toJson(data), MainActivity.this);
+//                            stop.setVisibility(View.VISIBLE);
+//                            start.setVisibility(View.GONE);
+//                            checkID();
+//                            startActivity(new Intent(MainActivity.this, DriverMapActivity.class));
+//                        }
+//                    }
+//                });
             }
         });
 
