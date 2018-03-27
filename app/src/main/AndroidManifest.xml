@@ -53,6 +53,7 @@
         <service
             android:name=".Service.LocationUpdate"
             android:label="@string/title_activity_maps"></service>
+        <activity android:name=".LocationActivity"/>
     </application>
 
 </manifest>
