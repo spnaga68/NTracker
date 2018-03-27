@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,13 +35,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import pasu.ntracker.Service.LocationUpdate;
 import pasu.ntracker.data.CommonData;
 import pasu.ntracker.data.Tracker;
+import pasu.ntracker.data.Waypoints;
 import pasu.ntracker.utils.CarMovementAnimation;
 import pasu.ntracker.utils.CommonInterface;
 import pasu.ntracker.utils.CommonUtils;
@@ -61,7 +72,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private String TOUR_ID = "";
     private Marker currentMarker;
     private Tracker data;
-
+    ArrayList<Waypoints> arrayList = new ArrayList<>();
     private FloatingActionButton currentLocationIcon;
 
     private TextView distance_travelled, time_travelled, estimate_time, speed, idle_time;
@@ -72,7 +83,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            String message = intent.getStringExtra("message");
+            String message = "" + intent.getLongExtra(CommonData.TRAVELED_IDLE_TIME, 0L);
             Log.d("receiver", "Got message: " + message);
             if (distance_travelled != null) {
                 distance_travelled.setText(intent.getFloatExtra(CommonData.TRAVELED_DIST, 0.0f) + " km");
@@ -82,7 +93,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 speed.setText(intent.getDoubleExtra(CommonData.TRAVEL_SPEED, 0.0) + " km/hr");
                 String estimatedtime = SessionSave.getSession(String.valueOf(data.getPickuplat() + "T" + data.getDroplat()), context);
                 if (!estimatedtime.equals("")) {
-                    long estimatedArrival = (Long.parseLong(estimatedtime) * 1000) - timeTravelled + intent.getLongExtra(CommonData.TRAVELED_IDLE_TIME, 0L);
+                    long estimatedArrival = (Long.parseLong(estimatedtime) * 1000) - timeTravelled + (intent.getLongExtra(CommonData.TRAVELED_IDLE_TIME, 0L));
                     estimate_time.setText(CommonUtils.getTimeHrsMins(estimatedArrival));
                 }
                 idle_time.setText(CommonUtils.getTimeHrs(intent.getLongExtra(CommonData.TRAVELED_IDLE_TIME, 0L)));
@@ -128,13 +139,29 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private Marker pickupMarker;
     private Marker dropMarker;
     private Marker truckMarker;
+    private boolean isReceiver;
+    ArrayList<Integer> colors = new ArrayList<>();
+    private int color_var;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent() != null && getIntent().getStringExtra("type") != null) {
+            if (getIntent().getStringExtra("type").equals(CommonData.RECEIVER_ACTIVITY))
+                isReceiver = true;
+            TOUR_ID = getIntent().getStringExtra(CommonData.TRACK_ID);
+        } else {
+
+            TOUR_ID = SessionSave.getSession(CommonData.TRACK_ID, this);
 
 
-        TOUR_ID = SessionSave.getSession(CommonData.TRACK_ID, this);
+        }
+
+        colors.add(Color.RED);
+        colors.add(Color.WHITE);
+        colors.add(Color.MAGENTA);
+        colors.add(Color.YELLOW);
+        colors.add(Color.GREEN);
         data = CommonUtils.fromJson(SessionSave.getSession(CommonData.CURRENT_TRACK_INFO, this), Tracker.class);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -152,8 +179,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         speed = findViewById(R.id.speed);
         currentLocationIcon = findViewById(R.id.currentLocationIcon);
         idle_time = findViewById(R.id.idle_time);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter(LocationUpdate.BROADCAST_ACTION));
+
+        if (!isReceiver)
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                    new IntentFilter(LocationUpdate.BROADCAST_ACTION));
 
         currentLocationIcon.setOnClickListener(new View.OnClickListener() {
             public AlertDialog dialog;
@@ -193,6 +222,121 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
         });
+
+        if (isReceiver) {
+            getPreviousLatLng();
+            getCurrentLocation();
+        }
+    }
+
+    private void getPreviousLatLng() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("trackWaypoints/" + TOUR_ID);
+        final String TAG = "Commentary itemArrayList";
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                System.out.println(TAG + dataSnapshot.getValue());
+
+                for (DataSnapshot md : dataSnapshot.getChildren()) {
+                    if (md.getValue() != null && !md.getValue().equals("")) {
+                        Waypoints matchDetails = md.getValue(Waypoints.class);
+
+                        arrayList.add(matchDetails);
+                        if (arrayList.size() > 2) {
+                            PolylineOptions lineOptions = new PolylineOptions().width(5).color(Color.BLACK).geodesic(true);
+                            lineOptions.add(arrayList.get(arrayList.size() - 2).getPickupLatlng(), arrayList.get(arrayList.size() - 2).getPickupLatlng());
+                            lineOptions.width(10);
+                            lineOptions.color(Color.BLACK);
+                            lineOptions.startCap(new SquareCap());
+                            lineOptions.endCap(new SquareCap());
+                            lineOptions.jointType(ROUND);
+                            Polyline polyline = mMap.addPolyline(lineOptions);
+                            polyline.setZIndex(2);
+                        }
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
+    private void getCurrentLocation() {
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("trackWaypoints/" + TOUR_ID);
+        final String TAG = "Commentary itemArrayList";
+
+        Query queryRef;
+        System.out.println("postionnnncomm" + TOUR_ID);
+        queryRef = myRef
+                .orderByChild("time");
+        queryRef.addChildEventListener(
+                new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        System.out.println("commentary added*" + dataSnapshot.getValue());
+                        Waypoints data = dataSnapshot.getValue(Waypoints.class);
+                        LatLng sydney = new LatLng(data.getDroplat(), data.getDroplng());
+//                        if (currentMarker != null)
+//                            currentMarker.remove();
+//                        currentMarker = mMap.addMarker(new MarkerOptions().position(sydney).title(CommonUtils.getDate(data.getTime())));
+                        //   mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 017f));
+
+                        arrayList.add(data);
+                        if (arrayList.size() > 2) {
+
+                            PolylineOptions lineOptions = new PolylineOptions().width(5).color(colors.get(color_var)).geodesic(true);
+                            lineOptions.add(arrayList.get(arrayList.size() - 2).getPickupLatlng(), arrayList.get(arrayList.size() - 1).getPickupLatlng());
+                            lineOptions.width(10);
+                            lineOptions.color(colors.get(color_var));
+                            lineOptions.startCap(new SquareCap());
+                            lineOptions.endCap(new SquareCap());
+                            lineOptions.jointType(ROUND);
+                            Polyline polyline = mMap.addPolyline(lineOptions);
+                            polyline.setZIndex(2);
+                            polyline.setTag(data);
+                            polyline.setClickable(true);
+                        }
+                        if (color_var >3)
+                            color_var = 0;
+                        else
+                            color_var++;
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
     }
 
     @Override
@@ -225,7 +369,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         mMap.moveCamera(cu);
 
-
+        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+                //do something with polyline
+                Waypoints data = (Waypoints) polyline.getTag();
+                Toast.makeText(DriverMapActivity.this, CommonUtils.getDate(data.getTime()), Toast.LENGTH_LONG).show();
+            }
+        });
         pickupMarker = mMap.addMarker(new MarkerOptions()
                 .position(data.getPickuplatlng())
                 .icon(BitmapDescriptorFactory.fromBitmap(CustomMarker.getMarkerBitmapFromView("Started At", DriverMapActivity.this))));
@@ -240,7 +391,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 Route route = new Route();
                 route.setUpPolyLine(mMap, DriverMapActivity.this,
                         new LatLng(data.getPickuplat(), data.getPickuplng()), new LatLng(data.getDroplat(), data.getDroplng())
-                        , SessionSave.ReadWaypoints(DriverMapActivity.this),DriverMapActivity.this);
+                        , SessionSave.ReadWaypoints(DriverMapActivity.this), DriverMapActivity.this);
             }
         }, 1200);
     }

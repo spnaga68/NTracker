@@ -22,13 +22,14 @@ import pasu.ntracker.data.CommonData;
 import pasu.ntracker.data.Tracker;
 import pasu.ntracker.utils.CommonUtils;
 import pasu.ntracker.utils.SessionSave;
+import pasu.ntracker.viewer.VideoActivityMain;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 420;
     private AppCompatButton start;
     private AppCompatButton list;
-    private AppCompatButton stop;
+    private AppCompatButton stop, track;
     private double pickuplat = 11.031712, pickuplng = 77.018712, droplat = 11.039167, droplng = 77.036476;
     private Tracker data;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         start = (AppCompatButton) findViewById(R.id.start);
+        track = (AppCompatButton) findViewById(R.id.track);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,10 +74,17 @@ public class MainActivity extends AppCompatActivity {
         list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                VideoActivityMain
+                startActivity(new Intent(MainActivity.this, VideoActivityMain.class));
+            }
+        });
+        track.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//
                 startActivity(new Intent(MainActivity.this, DriverMapActivity.class));
             }
         });
+
 
         stop = (AppCompatButton) findViewById(R.id.stop);
         stop.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-       checkID();
+        checkID();
     }
 
     private void checkID() {
@@ -115,9 +124,11 @@ public class MainActivity extends AppCompatActivity {
             LocationUpdate.startLocationService(MainActivity.this);
             start.setVisibility(View.GONE);
             stop.setVisibility(View.VISIBLE);
+            track.setVisibility(View.VISIBLE);
             stop.setText("stop " + SessionSave.getSession(CommonData.TRACK_ID, MainActivity.this));
         } else {
             start.setVisibility(View.VISIBLE);
+            track.setVisibility(View.GONE);
             stop.setVisibility(View.GONE);
         }
     }

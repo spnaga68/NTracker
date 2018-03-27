@@ -1,5 +1,7 @@
 package pasu.ntracker.data;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Admin on 18-03-2018.
  */
@@ -69,7 +71,15 @@ public class Waypoints {
         this.source = source;
     }
 
-    private double pickuplat,pickuplng,droplat,droplng,dist;
+    public LatLng getPickupLatlng() {
+        return new LatLng(pickuplat, pickuplng);
+    }
+
+    public LatLng getDropLatlng() {
+        return new LatLng(pickuplat, pickuplng);
+    }
+
+    private double pickuplat, pickuplng, droplat, droplng, dist;
     private long time;
-    private String error,source;
+    private String error, source;
 }

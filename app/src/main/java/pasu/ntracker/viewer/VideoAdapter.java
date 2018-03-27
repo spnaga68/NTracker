@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import pasu.ntracker.DriverMapActivity;
 import pasu.ntracker.MainActivity;
 import pasu.ntracker.MapsActivity;
 import pasu.ntracker.R;
@@ -55,9 +56,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                 public void onClick(View view) {
                     selectedItem = getAdapterPosition();
                     //notifyDataSetChanged();
-                    Intent i =new Intent(mContext, ReceiverActivity.class);
+                    Intent i =new Intent(mContext, DriverMapActivity.class);
+                    i.putExtra("type",CommonData.RECEIVER_ACTIVITY);
                     i.putExtra(CommonData.TRACK_ID,albumList.get(selectedItem).getTrackID());
-                    mContext.startActivity(i);
+                    i.putExtra(CommonData.CURRENT_TRACK_INFO,CommonUtils.toJson(albumList.get(selectedItem)))
+;                    mContext.startActivity(i);
 
                 }
             });
