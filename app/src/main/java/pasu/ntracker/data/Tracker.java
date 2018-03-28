@@ -42,8 +42,8 @@ public class Tracker {
     }
 
     private String trackID;
-    private long timeStarted=0L;
-    private long timeEnded=0L;
+    private long timeStarted = 0L;
+    private long timeEnded = 0L;
 
     public double getPickuplat() {
         return pickuplat;
@@ -77,11 +77,30 @@ public class Tracker {
         this.droplng = droplng;
     }
 
-    private double pickuplat,pickuplng,droplat,droplng;
-    public LatLng getPickuplatlng(){
-        return  new LatLng(getPickuplat(), getPickuplng());
+    public String getPickAddress() {
+        return pickAddress;
     }
-    public LatLng getDroplatlng(){
-        return  new LatLng(getDroplat(), getDroplng());
+
+    public void setPickAddress(String pickAddress) {
+        this.pickAddress = pickAddress;
+    }
+
+    public String getDropAddress() {
+        return dropAddress;
+    }
+
+    public void setDropAddress(String dropAddress) {
+        this.dropAddress = dropAddress;
+    }
+
+    private String pickAddress, dropAddress;
+    private double pickuplat, pickuplng, droplat, droplng;
+
+    public LatLng getPickuplatlng() {
+        return new LatLng(getPickuplat(), getPickuplng());
+    }
+
+    public LatLng getDroplatlng() {
+        return new LatLng(getDroplat(), getDroplng());
     }
 }

@@ -1,6 +1,6 @@
 package pasu.ntracker;
 
-import  android.content.Context;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
@@ -45,6 +45,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,12 +55,18 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.ResponseBody;
+import pasu.ntracker.Service.LocationUpdate;
+import pasu.ntracker.data.CommonData;
+import pasu.ntracker.data.Tracker;
+import pasu.ntracker.utils.CommonUtils;
 import pasu.ntracker.utils.MapWrapperLayout;
+import pasu.ntracker.utils.SessionSave;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,7 +100,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
     private CardView pickuplay, droplay;
     private CheckBox cb_pickup, cb_drop;
     private LatLng pickupLatLng;
-    private Place pickup_Place,drop_Place;
+    private Place pickup_Place, drop_Place;
 
     //    private APIService mAPIService;
     @Override
@@ -153,8 +162,10 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
                     startActivityForResult(intent, 1);
                 } catch (GooglePlayServicesRepairableException e) {
                     // TODO: Handle the error.
+                    e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
+                    e.printStackTrace();
                 }
             }
         });
@@ -179,8 +190,10 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
                     startActivityForResult(intent, 2);
                 } catch (GooglePlayServicesRepairableException e) {
                     // TODO: Handle the error.
+                    e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
+                    e.printStackTrace();
                 }
             }
         });
@@ -271,17 +284,32 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
             public void onClick(View view) {
                 String pickup = txt_location.getText().toString();
                 String drop = drop_location.getText().toString();
-                if (!TextUtils.isEmpty(pickup) && !TextUtils.isEmpty(drop)) {
-                    Bundle b = new Bundle();
-                    b.putString("pickup", pickup);
-                    b.putString("dropoff", drop);
-                    b.putParcelable("pick_latlng", pickup_Place.getLatLng());
-                    b.putParcelable("drop_latlng", drop_Place.getLatLng());
-                    Intent i = new Intent(LocationActivity.this, MainActivity.class);
-                    i.putExtras(b);
-                    startActivity(i);
-                    finish();
-                }
+
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("trackDetail").push();
+                final Tracker data = new Tracker();
+                data.setVechicleID("123");
+                data.setTrackID(myRef.getKey());
+                data.setPickuplat(pickupLatLng.latitude);
+                data.setPickuplng(pickupLatLng.longitude);
+                data.setDroplat(drop_latLng.latitude);
+                data.setDroplng(drop_latLng.longitude);
+                data.setPickAddress(pickup);
+                data.setDropAddress(drop);
+                data.setTimeStarted(new Date().getTime());
+                myRef.setValue(data, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            SessionSave.saveSession(CommonData.TRACK_ID, databaseReference.getKey(), LocationActivity.this);
+                            SessionSave.saveSession(CommonData.CURRENT_TRACK_INFO, CommonUtils.toJson(data), LocationActivity.this);
+                            LocationUpdate.startLocationService(LocationActivity.this);
+                            startActivity(new Intent(LocationActivity.this, DriverMapActivity.class));
+                            finish();
+                        }
+                    }
+                });
             }
         });
     }
@@ -301,7 +329,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
             System.out.println("calleddddd " + "11");
             if (resultCode == RESULT_OK) {
                 type = "pickup";
-                if (pickup_Place != null){
+                if (pickup_Place != null) {
                     pickup_Place = null;
                 }
                 pickup_Place = PlaceAutocomplete.getPlace(this, data);

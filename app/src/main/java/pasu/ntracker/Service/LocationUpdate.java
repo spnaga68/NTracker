@@ -209,7 +209,7 @@ public class LocationUpdate extends Service implements
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e("", "Location update service started Start");
         startID = startId;
-        System.out.println("startID" + startId);
+        Systems.out.println("startID" + startId);
         mGoogleApiClient.connect();
 
         startTime();
@@ -243,7 +243,7 @@ public class LocationUpdate extends Service implements
         DistanceHandler.post(distanceRunnable);
         intent = new Intent(BROADCAST_ACTION);
         instance = this;
-        System.out.println("Location  ConnectionResult 1");
+        Systems.out.println("Location  ConnectionResult 1");
         Log.e("", "Location update service create");
         mhandler = new Handler();
 //        mTimer.scheduleAtFixedRate(new LocationUpdateTask(), 0, UPDATE_INTERVAL_IN_TRIP);
@@ -251,9 +251,9 @@ public class LocationUpdate extends Service implements
         mTimer.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Gcmupdate ----->   " + new Date());
+                Systems.out.println("Gcmupdate ----->   " + new Date());
                 sendMessage();
-                System.out.println("NetworkStatus " + NetworkStatus.isOnline(LocationUpdate.this) + " sLocation " + sLocation + " updateLocation " + updateLocation
+                Systems.out.println("NetworkStatus " + NetworkStatus.isOnline(LocationUpdate.this) + " sLocation " + sLocation + " updateLocation " + updateLocation
                         + "__" + SessionSave.getSession("Id", LocationUpdate.this) + "__" + SessionSave.getSession("shift_status", LocationUpdate.this));
                 if (SessionSave.getSession(CommonData.TRACK_ID, LocationUpdate.this).trim().equals("")) {
                     if (mTimer != null)
@@ -348,7 +348,7 @@ public class LocationUpdate extends Service implements
 
     @Override
     public void onConnectionFailed(final ConnectionResult arg0) {
-        //   System.out.println("Location  ConnectionResult " + arg0);
+        //   Systems.out.println("Location  ConnectionResult " + arg0);
     }
 
     /**
@@ -360,7 +360,7 @@ public class LocationUpdate extends Service implements
         if (currentLocation != null && currentLocation.getSpeed() > 2 && currentLocation.hasAccuracy() && currentLocation.getAccuracy() <= 100) {
             boolean updateLocationandReport = false;
 
-            System.out.println("haversine 2*" + updateLocationandReport + "__" + lastlatitude1 + "__" + lastlongitude1);
+            Systems.out.println("haversine 2*" + updateLocationandReport + "__" + lastlatitude1 + "__" + lastlongitude1);
 
 
             if (currentLocation.getLatitude() != 0.0 && currentLocation.getLongitude() != 0.0) {
@@ -385,7 +385,7 @@ public class LocationUpdate extends Service implements
                 float[] ff = new float[1];
 
                 track_data = CommonUtils.fromJson(SessionSave.getSession(CommonData.CURRENT_TRACK_INFO, this), Tracker.class);
-                System.out.println("polylat"+track_data.getPickuplat() + "P" + track_data.getDroplat()+"__"+SessionSave.getSession(track_data.getPickuplat() + "P" + track_data.getDroplat(), getApplicationContext()));
+                Systems.out.println("polylat" + track_data.getPickuplat() + "P" + track_data.getDroplat() + "__" + SessionSave.getSession(track_data.getPickuplat() + "P" + track_data.getDroplat(), getApplicationContext()));
                 if (!SessionSave.getSession(track_data.getPickuplat() + "P" + track_data.getDroplat(), getApplicationContext()).equals("")) {
                     List<LatLng> latLngs = Arrays.asList(CommonUtils.fromJson(SessionSave.getSession(track_data.getPickuplat() + "P" + track_data.getDroplat(), getApplicationContext()), LatLng[].class));
 
@@ -401,7 +401,7 @@ public class LocationUpdate extends Service implements
                         locationUpdatedAt = System.currentTimeMillis();
 
                     } else {
-                        System.out.println("secondElapsed" + startID + "*" + System.currentTimeMillis() + "__" + locationUpdatedAt + "__" + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - locationUpdatedAt));
+                        Systems.out.println("secondElapsed" + startID + "*" + System.currentTimeMillis() + "__" + locationUpdatedAt + "__" + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - locationUpdatedAt));
                         long secondsElapsed = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - locationUpdatedAt);
                         if (secondsElapsed <= 0) {
                             locationUpdatedAt = System.currentTimeMillis();
@@ -411,7 +411,7 @@ public class LocationUpdate extends Service implements
                             locationUpdatedAt = System.currentTimeMillis();
                             if (lastlatitude != 0.0 && lastlongitude != 0.0) {
                                 boolean isLocationRepeating = false;
-                                System.out.println("calculateDistancecalled");
+                                Systems.out.println("calculateDistancecalled");
                                 JSONArray jsonArray = SessionSave.ReadWaypoints(LocationUpdate.this);
 //                                for (int i = 0; i < jsonArray.length(); i++) {
 //                                    try {
@@ -440,7 +440,7 @@ public class LocationUpdate extends Service implements
                     }
 
 
-                    System.out.println("GCM update --- > ll  " + SessionSave.getDistance(LocationUpdate.this) + lastlatitude);
+                    Systems.out.println("GCM update --- > ll  " + SessionSave.getDistance(LocationUpdate.this) + lastlatitude);
 
                 } else if (!SessionSave.getSession("travel_status", LocationUpdate.this).equalsIgnoreCase("2")) {
                     lastlatitude = currentLatitude;
@@ -494,7 +494,7 @@ public class LocationUpdate extends Service implements
     @Override
     public void onLocationChanged(final Location location) {
 
-        System.out.println("onlocaitonchangeddd");
+        Systems.out.println("onlocaitonchangeddd");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             if (location != null && location.getLatitude() != 0.0) {
                 String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
@@ -504,7 +504,7 @@ public class LocationUpdate extends Service implements
                 currentLongtitude = location.getLongitude();
 
                 mLastLocation = location;
-                System.out.println("onNewLocationAvailable " + startID + "__" + mLastUpdateTime + "_" + SessionSave.getSession("status", LocationUpdate.this) + "++" + currentLatitude + "__" + speed + "__" + location.getAccuracy());
+                Systems.out.println("onNewLocationAvailable " + startID + "__" + mLastUpdateTime + "_" + SessionSave.getSession("status", LocationUpdate.this) + "++" + currentLatitude + "__" + speed + "__" + location.getAccuracy());
                 try {
                     UtilizeLocation();
                 } catch (Exception e) {
@@ -548,14 +548,14 @@ public class LocationUpdate extends Service implements
         LatLng from = new LatLng(lat1, lon1);
         final LatLng to = new LatLng(lat2, lon2);
 
-        System.out.println("haversine 1");
+        Systems.out.println("haversine 1");
 
         //Calculating the distance in meters
 
         double distance = (float) SphericalUtil.computeDistanceBetween(from, to) / 1000;
         if (SessionSave.getSession("Metric", LocationUpdate.this).trim().equalsIgnoreCase("miles"))
             distance = distance / 1.60934;
-        System.out.println("Haversine Distance*" + (distance) + "__" + from.latitude + "__" + from.longitude + "__" + to.latitude + "__" + to.longitude);
+        Systems.out.println("Haversine Distance*" + (distance) + "__" + from.latitude + "__" + from.longitude + "__" + to.latitude + "__" + to.longitude);
 //        if ((distance * 1000) > slabDistance) {
 //            new FindApproxDistance(from, to);
 ////            DistanceHandler.postDelayed(distanceRunnable, 2000);
@@ -565,16 +565,16 @@ public class LocationUpdate extends Service implements
         distance += SessionSave.getDistance(LocationUpdate.this);
 
         SessionSave.setDistance(distance, LocationUpdate.this);
-        System.out.println("Haversine Distance**" + (distance));
+        Systems.out.println("Haversine Distance**" + (distance));
 
         SessionSave.saveSession("lastknowlats", "" + to.latitude, LocationUpdate.this);
         SessionSave.saveSession("lastknowlngs", "" + to.longitude, LocationUpdate.this);
-
+        Systems.out.println("haversineway" + track_data.getTimeStarted() + "___" + System.currentTimeMillis());
 
         SessionSave.saveWaypoints(from, to, "haversine", distance, "" + "___" + startID, LocationUpdate.this);
 
-        SessionSave.saveGoogleWaypoints(from, to, "haversine", distance, "" + "___" + startID, LocationUpdate.this);
-//        }
+        SessionSave.saveGoogleWaypoints(from, to, "haversine", distance, "" + "___" + startID, speed, SessionSave.getWaitingTime(LocationUpdate.this), SessionSave.getSession(String.valueOf(track_data.getPickuplat() + "T" + track_data.getDroplat()), LocationUpdate.this),
+                System.currentTimeMillis() - track_data.getTimeStarted(), LocationUpdate.this);
     }
 
 
@@ -696,13 +696,13 @@ public class LocationUpdate extends Service implements
         Type type = new TypeToken<List<Waypoints>>() {
         }.getType();
         List<Waypoints> contactList = gson.fromJson(SessionSave.ReadGoogleWaypoints(LocationUpdate.this).toString(), type);
-        System.out.println("readingdata" + contactList.size() + "___" + SessionSave.ReadGoogleWaypoints(LocationUpdate.this));
+        Systems.out.println("readingdata" + contactList.size() + "___" + SessionSave.ReadGoogleWaypoints(LocationUpdate.this));
         if (contactList.size() > 0)
             myRef.setValue(contactList.get(0), new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError == null) {
-                        SessionSave.saveGoogleWaypoints(null, null, "", SessionSave.getDistance(LocationUpdate.this), "", LocationUpdate.this);
+                        SessionSave.saveGoogleWaypoints(null, null, "", SessionSave.getDistance(LocationUpdate.this), "", 0f, 0, "", 0L, LocationUpdate.this);
                     }
                 }
             });
@@ -745,7 +745,7 @@ public class LocationUpdate extends Service implements
 //                    //https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Washington,DC&destinations=New+York+City,NY&key=YOUR_API_KEY
 //                    new APIService_Retrofit_JSON_NoProgress(LocationUpdate.this, this, null, true, url, true).execute();
 //
-//                System.out.println("carmodel" + url);
+//                Systems.out.println("carmodel" + url);
 //            }
 //
 //        }
@@ -756,7 +756,7 @@ public class LocationUpdate extends Service implements
 //
 //            if (isSuccess) {
 //                try {
-//                    System.out.println("carmodel" + result.replaceAll("\\s", ""));
+//                    Systems.out.println("carmodel" + result.replaceAll("\\s", ""));
 //                    JSONObject data = new JSONObject(result);
 //                    if (!data.getString("status").equalsIgnoreCase("OK")) {
 //                        if (result != null && data.getString("status").equalsIgnoreCase("OVER_QUERY_LIMIT") && !ROUTE_EXPIRED_TODAY) {
@@ -772,10 +772,10 @@ public class LocationUpdate extends Service implements
 //                            double distance = (float) SphericalUtil.computeDistanceBetween(pick, drop) / 1000;
 //                            if (SessionSave.getSession("Metric", LocationUpdate.this).trim().equalsIgnoreCase("miles"))
 //                                distance = distance / 1.60934;
-//                            System.out.println("Haversine Distance" + (distance));
+//                            Systems.out.println("Haversine Distance" + (distance));
 //                            distance += SessionSave.getGoogleDistance(LocationUpdate.this);
 //                            SessionSave.setGoogleDistance(distance, LocationUpdate.this);
-//                            System.out.println("googledistanceee " + "1_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
+//                            Systems.out.println("googledistanceee " + "1_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
 //                            SessionSave.saveGoogleWaypoints(pick, drop, "haversine", distance, "UNKNOWN" + result, LocationUpdate.this);
 //
 //
@@ -797,10 +797,10 @@ public class LocationUpdate extends Service implements
 //                            if (SessionSave.getSession("Metric", LocationUpdate.this).trim().equalsIgnoreCase("miles"))
 //                                dist = dist / 1.60934;
 //                            SessionSave.setGoogleDistance(SessionSave.getGoogleDistance(LocationUpdate.this) + dist, LocationUpdate.this);
-//                            System.out.println("googledistanceee " + "2_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
+//                            Systems.out.println("googledistanceee " + "2_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
 //                            SessionSave.saveGoogleWaypoints(pick, drop, "google", dist, "", LocationUpdate.this);
 //
-//                            System.out.println("broad__________" + dist + "__" + "__" + SessionSave.getGoogleDistance(LocationUpdate.this));
+//                            Systems.out.println("broad__________" + dist + "__" + "__" + SessionSave.getGoogleDistance(LocationUpdate.this));
 //
 //                            SessionSave.saveSession("lastknowlats", "" + drop.latitude, LocationUpdate.this);
 //                            SessionSave.saveSession("lastknowlngs", "" + drop.longitude, LocationUpdate.this);
@@ -845,10 +845,10 @@ public class LocationUpdate extends Service implements
 //                            double distance = (float) SphericalUtil.computeDistanceBetween(pick, drop) / 1000;
 //                            if (SessionSave.getSession("Metric", LocationUpdate.this).trim().equalsIgnoreCase("miles"))
 //                                distance = distance / 1.60934;
-//                            System.out.println("Haversine Distance" + (distance));
+//                            Systems.out.println("Haversine Distance" + (distance));
 //                            distance += SessionSave.getGoogleDistance(LocationUpdate.this);
 //                            SessionSave.setGoogleDistance(distance, LocationUpdate.this);
-//                            System.out.println("googledistanceee " + "3_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
+//                            Systems.out.println("googledistanceee " + "3_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
 //                            SessionSave.saveGoogleWaypoints(pick, drop, "haversine", distance, e.getLocalizedMessage(), LocationUpdate.this);
 //
 //
@@ -898,10 +898,10 @@ public class LocationUpdate extends Service implements
 //                double distance = (float) SphericalUtil.computeDistanceBetween(pick, drop) / 1000;
 //                if (SessionSave.getSession("Metric", LocationUpdate.this).trim().equalsIgnoreCase("miles"))
 //                    distance = distance / 1.60934;
-//                System.out.println("Haversine Distance" + (distance));
+//                Systems.out.println("Haversine Distance" + (distance));
 //                distance += SessionSave.getGoogleDistance(LocationUpdate.this);
 //                SessionSave.setGoogleDistance(distance, LocationUpdate.this);
-//                System.out.println("googledistanceee " + "4_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
+//                Systems.out.println("googledistanceee " + "4_" + pick.latitude + "__" + pick.longitude + "_____" + drop.latitude + "__" + drop.longitude);
 //                SessionSave.saveGoogleWaypoints(pick, drop, "haversine", distance, "error" + result, LocationUpdate.this);
 //
 //                SessionSave.saveSession("lastknowlats", "" + drop.latitude, LocationUpdate.this);
@@ -953,7 +953,7 @@ public class LocationUpdate extends Service implements
         SessionSave.setDistance(0.0, context);
         SessionSave.setGoogleDistance(0f, context);
         SessionSave.saveSession("lastknowlats", "", context);
-        SessionSave.saveGoogleWaypoints(null, null, "", 0.0, "", context);
+        SessionSave.saveGoogleWaypoints(null, null, "", 0L, "", 0f, 0, "", 0L, context);
         SessionSave.saveWaypoints(null, null, "", 0.0, "", context);
     }
 

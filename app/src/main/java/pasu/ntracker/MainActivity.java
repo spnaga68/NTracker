@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import pasu.ntracker.data.CommonData;
 import pasu.ntracker.data.Tracker;
 import pasu.ntracker.utils.CommonUtils;
 import pasu.ntracker.utils.SessionSave;
+import pasu.ntracker.utils.Systems;
 import pasu.ntracker.viewer.VideoActivityMain;
 
 
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Systems.out.println("firebasetoken"+ FirebaseInstanceId.getInstance().getToken());
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {

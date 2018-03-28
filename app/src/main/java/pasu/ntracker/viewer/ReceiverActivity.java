@@ -30,6 +30,7 @@ import pasu.ntracker.data.CommonData;
 import pasu.ntracker.data.Waypoints;
 import pasu.ntracker.utils.CommonUtils;
 import pasu.ntracker.utils.SessionSave;
+import pasu.ntracker.utils.Systems;
 
 /**
  * Created by Admin on 21-03-2018.
@@ -66,14 +67,14 @@ public class ReceiverActivity extends AppCompatActivity implements OnMapReadyCal
         final String TAG = "Commentary itemArrayList";
 
         Query queryRef;
-        System.out.println("postionnnncomm" + TOUR_ID);
+        Systems.out.println("postionnnncomm" + TOUR_ID);
         queryRef = myRef
                 .orderByChild("time");
         queryRef.addChildEventListener(
                 new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        System.out.println("commentary added" + dataSnapshot.getValue());
+                        Systems.out.println("commentary added" + dataSnapshot.getValue());
                         Waypoints data = dataSnapshot.getValue(Waypoints.class);
                         LatLng sydney = new LatLng(data.getDroplat(), data.getDroplng());
                         if(currentMarker!=null)

@@ -136,7 +136,11 @@ public class SessionSave {
     }
 
 
-    public static void saveGoogleWaypoints(LatLng start, LatLng dest, String source, double dist, String error, Context mContext) {
+    public static void saveGoogleWaypoints(LatLng start, LatLng dest, String source,
+                                           double dist, String error,
+                                           double speedValue, long idle,
+                                           String estimatedtime, long timeTravelled,
+                                           Context mContext) {
 
 
         SharedPreferences prefs = mContext.getSharedPreferences("wayPoints", 0);
@@ -156,9 +160,9 @@ public class SessionSave {
 //            data.setDroplng(dest.longitude);
 //            arrayList.add(data);
 //            WayPointsData[] wayPointsData1=arrayList.toArray(new WayPointsData[arrayList.size()]);
-//            System.out.println("waydataaaaa"+wayPointsData1+"__"+wayPointsData1.toString());
+//            Systems.out.println("waydataaaaa"+wayPointsData1+"__"+wayPointsData1.toString());
 //            String s = new Gson().toJson(wayPointsData1.toString());
-//            System.out.println("saving way points" + s);
+//            Systems.out.println("saving way points" + s);
 
 
             JSONArray jsonArray = ReadGoogleWaypoints(mContext);
@@ -174,8 +178,13 @@ public class SessionSave {
                 jsonObject.put("droplat", dest.latitude);
                 jsonObject.put("droplng", dest.longitude);
                 jsonObject.put("time", new Date().getTime());
+
+                jsonObject.put("speedValue", speedValue);
+                jsonObject.put("idle", idle);
+                jsonObject.put("estimatedtime", estimatedtime);
+                jsonObject.put("timeTravelled", timeTravelled);
                 jsonArray.put(jsonObject);
-                System.out.println("waypoints storing" + jsonArray.toString());
+                Systems.out.println("waypoints storing" + jsonArray.toString());
                 editor.putString("wayPoints", jsonArray.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -188,7 +197,7 @@ public class SessionSave {
 //            JSONObject ss = new JSONObject();
 //            ss.put("way", ReadGoogleWaypoints(mContext));
 //            ss.put("hai", "sdfds");
-//            System.out.println("haiiii" + ss);
+//            Systems.out.println("haiiii" + ss);
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }
@@ -202,14 +211,14 @@ public class SessionSave {
         try {
             SharedPreferences prefs = mContext.getSharedPreferences("wayPoints", 0);
             jsonArray = new JSONArray(prefs.getString("wayPoints", "[]"));
-            System.out.println("waypoints reading" + jsonArray.toString());
+            Systems.out.println("waypoints reading" + jsonArray.toString());
 //            JSONObject jsonObject = new JSONObject(s);
-//            System.out.println("readingway" + s + "___" + jsonObject);
+//            Systems.out.println("readingway" + s + "___" + jsonObject);
 //            wayPointsData = new Gson().fromJson(jsonObject.toString(), WayPointsData[].class);
 //            jsonArray2 = jo.getJSONArray("values");
 //            for (int i = 0; i < jsonArray2.length(); i++) {
 //                JSONObject jsonObject = jsonArray2.getJSONObject(i);
-//                System.out.println("haiiiiii" + jsonObject.toString());
+//                Systems.out.println("haiiiiii" + jsonObject.toString());
 //                if (jsonObject != null) {
 //                    WayPointsData data = new Gson().fromJson(jsonObject.toString(), WayPointsData.class);
 //                    jsonArray.put(data);
@@ -249,7 +258,7 @@ public class SessionSave {
                 jsonObject.put("trip_id", SessionSave.getSession("trip_id", mContext));
                 jsonObject.put("time", DateFormat.getTimeInstance().format(new Date()));
                 jsonArray.put(jsonObject);
-                System.out.println("waypoints storing" + jsonArray.toString());
+                Systems.out.println("waypoints storing" + jsonArray.toString());
                 editor.putString("localwayPoints", jsonArray.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -266,7 +275,7 @@ public class SessionSave {
         try {
             SharedPreferences prefs = mContext.getSharedPreferences("localwayPoints", 0);
             jsonArray = new JSONArray(prefs.getString("localwayPoints", "[]"));
-            System.out.println("waypoints reading" + jsonArray.toString());
+            Systems.out.println("waypoints reading" + jsonArray.toString());
             for (int i = 0; i < ReadGoogleWaypoints(mContext).length(); i++) {
                 JSONObject jj = ReadGoogleWaypoints(mContext).getJSONObject(i);
                 jsonArray.put(jj);
@@ -301,11 +310,11 @@ public class SessionSave {
         double nLng = 0.0;
         SharedPreferences preferences = con.getSharedPreferences("nlastlong", con.MODE_PRIVATE);
         if (!preferences.getString("nLat", "").equals("")) {
-            System.out.println("LassstString" + SessionSave.getSession("nLat", con));
+            Systems.out.println("LassstString" + SessionSave.getSession("nLat", con));
             nLat = Double.parseDouble(preferences.getString("nLat", ""));
             nLng = Double.parseDouble(preferences.getString("nLng", ""));
         }
-        System.out.println("getLastLat" + preferences.getString("nLat", ""));
+        Systems.out.println("getLastLat" + preferences.getString("nLat", ""));
         return new LatLng(nLat, nLng);
     }
 

@@ -16,6 +16,7 @@ public class CommonData {
     public static final String BEARING = "bearing";
     public static final String RECEIVER_ACTIVITY = "reciver_act";
     public static String TRACK_ID = "trackid";
+    public static String CURRENT_TRACK_ID;
     public static boolean speed_waiting_stop;
     public static boolean iswaitingrunning;
 

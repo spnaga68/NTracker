@@ -22,6 +22,7 @@ import pasu.ntracker.data.CommonData;
 import pasu.ntracker.data.Tracker;
 import pasu.ntracker.utils.CommonUtils;
 import pasu.ntracker.utils.SessionSave;
+import pasu.ntracker.utils.Systems;
 
 /**
  * Created by developer on 26/9/17.
@@ -56,6 +57,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                 public void onClick(View view) {
                     selectedItem = getAdapterPosition();
                     //notifyDataSetChanged();
+                    CommonData.CURRENT_TRACK_ID = albumList.get(selectedItem).getTrackID();
                     Intent i =new Intent(mContext, DriverMapActivity.class);
                     i.putExtra("type",CommonData.RECEIVER_ACTIVITY);
                     i.putExtra(CommonData.TRACK_ID,albumList.get(selectedItem).getTrackID());
@@ -97,7 +99,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                 holder.card_view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
             else
                 holder.card_view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-            System.out.println("[poooooo" + position + "__" + albumList.size());
+            Systems.out.println("[poooooo" + position + "__" + albumList.size());
             holder.video_desc.setText(albumList.get(position).getTrackID());
             holder.video_date.setText(CommonUtils.getDate(albumList.get(position).getTimeStarted()));
             //Picasso.with(mContext).load(albumList[position].getThumbnail()).into(holder.video_thumb);

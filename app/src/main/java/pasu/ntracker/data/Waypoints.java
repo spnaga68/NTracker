@@ -82,4 +82,40 @@ public class Waypoints {
     private double pickuplat, pickuplng, droplat, droplng, dist;
     private long time;
     private String error, source;
+    private double speedValue;
+    private long idle;
+    private String estimatedtime;
+    private long timeTravelled;
+
+    public double getSpeedValue() {
+        return speedValue;
+    }
+
+    public void setSpeedValue(double speedValue) {
+        this.speedValue = speedValue;
+    }
+
+    public long getIdle() {
+        return idle;
+    }
+
+    public void setIdle(long idle) {
+        this.idle = idle;
+    }
+
+    public String getEstimatedtime() {
+        return estimatedtime;
+    }
+
+    public void setEstimatedtime(String estimatedtime) {
+        this.estimatedtime = estimatedtime;
+    }
+
+    public long getTimeTravelled() {
+        return timeTravelled;
+    }
+
+    public void setTimeTravelled(long timeTravelled) {
+        this.timeTravelled = timeTravelled;
+    }
 }

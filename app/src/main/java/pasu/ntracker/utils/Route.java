@@ -45,15 +45,6 @@ import static com.google.android.gms.maps.model.JointType.ROUND;
 public class Route {
     GoogleMap mMap;
     Context context;
-    String lang;
-    int colorcode;
-    static String LANGUAGE_SPANISH = "es";
-    static String LANGUAGE_ENGLISH = "en";
-    static String LANGUAGE_FRENCH = "fr";
-    static String LANGUAGE_GERMAN = "de";
-    static String LANGUAGE_CHINESE_SIMPLIFIED = "zh-CN";
-    static String LANGUAGE_CHINESE_TRADITIONAL = "zh-TW";
-    public static boolean ROUTE_EXPIRED_TODAY = false;
     private Polyline startPolyline, finalPolyline;
     private List<LatLng> listLatLng = new ArrayList<>();
     private CommonInterface commonInterface;
@@ -64,7 +55,7 @@ public class Route {
     public void setUpPolyLine(final GoogleMap map, final FragmentActivity mcontext,
                               final LatLng source, final LatLng destination, final JSONArray secListLatLng, final CommonInterface commonInterface) {
         this.mMap = map;
-        this.context=mcontext;
+        this.context = mcontext;
         this.commonInterface = commonInterface;
 //        final Fragment ff = (mcontext.getSupportFragmentManager().findFragmentById(R.id.mainFrag));
         if (source != null && destination != null) {
@@ -84,7 +75,7 @@ public class Route {
 
                             JsonObject gson = new JsonParser().parse(response.body().toString()).getAsJsonObject();
                             try {
-                                System.out.println("statusssss" + gson.toString());
+                                Systems.out.println("statusssss" + gson.toString());
 
                                 if (gson.get("status").getAsString().equals("OVER_QUERY_LIMIT")) {
                                     count++;
@@ -92,10 +83,10 @@ public class Route {
 //                                        drawRoute(map, mcontext, source, destination, SessionSave.getSession("Lang", mcontext), 0);
 //                                    else
                                     setUpPolyLine(map, mcontext, source, destination, secListLatLng, commonInterface);
-                                } else {
+                                } else if (gson.get("status").getAsString().equals("OK")) {
                                     count = 0;
                                     JsonObject leg = gson.get("routes").getAsJsonArray().get(0).getAsJsonObject().get("legs").getAsJsonArray().get(0).getAsJsonObject();
-                                    System.out.println("estimated_dd*" + source.latitude + "T" + destination.latitude + "___" + leg.get("duration").getAsJsonObject().get("value").getAsString());
+                                    Systems.out.println("estimated_dd*" + source.latitude + "T" + destination.latitude + "___" + leg.get("duration").getAsJsonObject().get("value").getAsString());
                                     SessionSave.saveSession(source.latitude + "D" + destination.latitude, leg.get("distance").getAsJsonObject().get("value").getAsString(), mcontext);
                                     SessionSave.saveSession(source.latitude + "T" + destination.latitude, leg.get("duration").getAsJsonObject().get("value").getAsString(), mcontext);
 
@@ -270,18 +261,16 @@ public class Route {
 
             if (commonInterface != null)
                 commonInterface.getPolyline(startPolyline);
-            System.out.println("polylat*" + src.latitude + "P" + dest.latitude+"__"+CommonUtils.toJson(startLatLng.toArray()));
+            Systems.out.println("polylat*" + src.latitude + "P" + dest.latitude + "__" + CommonUtils.toJson(startLatLng.toArray()));
             SessionSave.saveSession(src.latitude + "P" + dest.latitude, CommonUtils.toJson(startLatLng.toArray()), context);
 
-            if (secListLatLng == null)
-                finalLatLng.addAll(startLatLng);
-            else
+            if (secListLatLng != null) {
                 finalLatLng.addAll(SessionSave.getLatLongFromSessionArray(secListLatLng));
 //            startLatLng.clear();
 
-            startPolyline.setPoints(startLatLng);
-            finalPolyline.setPoints(finalLatLng);
-
+                startPolyline.setPoints(startLatLng);
+                finalPolyline.setPoints(finalLatLng);
+            }
             startPolyline.setZIndex(1);
             finalPolyline.setZIndex(2);
 

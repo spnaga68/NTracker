@@ -94,7 +94,7 @@ public class NearestApiCall extends AsyncTask<Object, String, String> {
 
             float[] distances = new float[2];
             Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, lat, lng, distances);
-            System.out.println("calleddddd " + "___" + distances[1]);
+            Systems.out.println("calleddddd " + "___" + distances[1]);
             if (distance == 0.0 || distances[0] < distance) {
                 distance = distances[0];
                 shortLatLng = new LatLng(lat, lng);
@@ -120,7 +120,7 @@ public class NearestApiCall extends AsyncTask<Object, String, String> {
 
             float[] distances = new float[2];
             Location.distanceBetween(shortLatLng.latitude, shortLatLng.longitude, lat, lng, distances);
-            System.out.println("calleddddd " + "___" + distances[0]);
+            Systems.out.println("calleddddd " + "___" + distances[0]);
             if (distances[0] < 10) {
                 markerOptions.icon(CustomMarker.getMarkerIconFromDrawable(mContext.getResources().getDrawable(R.drawable.ic_gas)));
                 Marker m = mMap.addMarker(markerOptions);
