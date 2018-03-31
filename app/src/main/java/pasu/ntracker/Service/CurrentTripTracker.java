@@ -175,7 +175,7 @@ public class CurrentTripTracker extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         builder.setAutoCancel(true);
-        builder.setTicker("Taximobility");
+        builder.setTicker("NTRACKER");
         builder.setContentTitle("NTracker");
         builder.setContentText(message);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -166,8 +166,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        stopService(new Intent(DriverMapActivity.this, CurrentTripTracker.class));
-        startService(new Intent(DriverMapActivity.this, CurrentTripTracker.class));
+//        stopService(new Intent(DriverMapActivity.this, CurrentTripTracker.class));
+//        startService(new Intent(DriverMapActivity.this, CurrentTripTracker.class));
         if (getIntent() != null && getIntent().getStringExtra("type") != null) {
             if (getIntent().getStringExtra("type").equals(CommonData.RECEIVER_ACTIVITY))
                 isReceiver = true;
@@ -408,6 +408,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
             @Override
             public void onPolylineClick(Polyline polyline) {
+
+
+
+
                 //do something with polyline
                 Waypoints data = (Waypoints) polyline.getTag();
                 Toast.makeText(DriverMapActivity.this, CommonUtils.getDate(data.getTime()), Toast.LENGTH_LONG).show();

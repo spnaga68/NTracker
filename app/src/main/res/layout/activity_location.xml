@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.6"
-                android:hint="Select Pickup Location"
+                android:hint="Source"
                 android:padding="10dp" />
 
             <CheckBox
@@ -66,7 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.6"
-                android:hint="Select Drop Location"
+                android:hint="Destination"
                 android:padding="10dp" />
 
             <CheckBox
@@ -93,7 +93,13 @@
         android:layout_height="match_parent"
         android:background="#BDBDBD">
 
-
+        <Button
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:text="Type" />
         <pasu.ntracker.utils.MapWrapperLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map_relative_layout"
             android:layout_width="fill_parent"
@@ -121,11 +127,19 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp"
+                android:text="Add Stop" />
 
             <Button
                 android:id="@+id/btn_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="10dp"
                 android:text="start" />

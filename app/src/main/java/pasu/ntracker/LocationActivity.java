@@ -1,6 +1,8 @@
 package pasu.ntracker;
 
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
@@ -12,16 +14,20 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -101,6 +107,14 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
     private CheckBox cb_pickup, cb_drop;
     private LatLng pickupLatLng;
     private Place pickup_Place, drop_Place;
+    private AlertDialog dialog;
+    private TextView type_mode;
+
+
+    String ss = "<p>For the <strong>next two days</strong> there will be a <strong>delay in the transportation</strong> due to a festival.</p>\n" +
+            "<p>If you travel in this time there will be time delay and<strong> increase in the travel cost.</strong></p>\n" +
+            "<p>So,it is advisable to start your transportation after this festival which helps to <strong>reduce the transportation cost.</strong></p>";
+    private boolean showDriver, showDocument;
 
     //    private APIService mAPIService;
     @Override
@@ -240,6 +254,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -259,6 +274,13 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
                         enableIdleListner(500);
                     }
                 }
+            }
+        });
+        type_mode = findViewById(R.id.type);
+        type_mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showType();
             }
         });
         cb_drop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -282,36 +304,93 @@ public class LocationActivity extends AppCompatActivity implements GoogleMap.OnC
         btn_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String pickup = txt_location.getText().toString();
-                String drop = drop_location.getText().toString();
+                if (!showDriver) {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LocationActivity.this);
+// ...Irrelevant code for customizing the buttons and title
+                    LayoutInflater inflater = LocationActivity.this.getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.driver, null);
+                    dialogBuilder.setView(dialogView);
 
+//                    EditText editText = (EditText) dialogView.findViewById(R.id.label_field);
+//                    editText.setText("test label");
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("trackDetail").push();
-                final Tracker data = new Tracker();
-                data.setVechicleID("123");
-                data.setTrackID(myRef.getKey());
-                data.setPickuplat(pickupLatLng.latitude);
-                data.setPickuplng(pickupLatLng.longitude);
-                data.setDroplat(drop_latLng.latitude);
-                data.setDroplng(drop_latLng.longitude);
-                data.setPickAddress(pickup);
-                data.setDropAddress(drop);
-                data.setTimeStarted(new Date().getTime());
-                myRef.setValue(data, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError == null) {
-                            SessionSave.saveSession(CommonData.TRACK_ID, databaseReference.getKey(), LocationActivity.this);
-                            SessionSave.saveSession(CommonData.CURRENT_TRACK_INFO, CommonUtils.toJson(data), LocationActivity.this);
-                            LocationUpdate.startLocationService(LocationActivity.this);
-                            startActivity(new Intent(LocationActivity.this, DriverMapActivity.class));
-                            finish();
+                    final AlertDialog alertDialog = dialogBuilder.create();
+                    alertDialog.show();
+                    dialogView.findViewById(R.id.whole).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
                         }
-                    }
-                });
-            }
+                    });
+                    showDriver = true;
+                } else if (!showDocument) {
+                    AlertDialog.Builder builder;
+                    showDocument = true;
+                    builder = new AlertDialog.Builder(LocationActivity.this);
+                    builder.setTitle("Things to remember")
+                            .setMessage(Html.fromHtml(ss))
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }else  {
+                    String pickup = txt_location.getText().toString();
+                    String drop = drop_location.getText().toString();
+
+
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("trackDetail").push();
+                    final Tracker data = new Tracker();
+                    data.setVechicleID("123");
+                    data.setTrackID(myRef.getKey());
+                    data.setPickuplat(pickupLatLng.latitude);
+                    data.setPickuplng(pickupLatLng.longitude);
+                    data.setDroplat(drop_latLng.latitude);
+                    data.setDroplng(drop_latLng.longitude);
+                    data.setPickAddress(pickup);
+                    data.setDropAddress(drop);
+                    data.setTimeStarted(new Date().getTime());
+                    myRef.setValue(data, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError == null) {
+                                SessionSave.saveSession(CommonData.TRACK_ID, databaseReference.getKey(), LocationActivity.this);
+                                SessionSave.saveSession(CommonData.CURRENT_TRACK_INFO, CommonUtils.toJson(data), LocationActivity.this);
+                                LocationUpdate.startLocationService(LocationActivity.this);
+                                startActivity(new Intent(LocationActivity.this, DriverMapActivity.class));
+                                finish();
+                            }
+                        }
+                    });
+                } }
         });
+    }
+
+    public void showType() {
+
+
+        final CharSequence[] items = {" Airport ", " Railway ", " Warehouse ", "Ship"};
+// arraylist to keep the selected items
+        final ArrayList seletedItems = new ArrayList();
+
+        dialog = new AlertDialog.Builder(this)
+                .setTitle("Stop or Destination Type")
+                .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        type_mode.setText(items[which]);
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
     private void enableIdleListner(int i) {

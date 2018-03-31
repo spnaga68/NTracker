@@ -8,7 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".GoodSelection">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,6 +59,10 @@
         <activity
             android:name=".LocationActivity"
             android:theme="@style/MyMaterialTheme" />
+        <activity
+            android:name=".SimpleScannerActivity"
+            android:theme="@style/MyMaterialTheme" />
+   <activity android:name=".MainActivity"/>
     </application>
 
 </manifest>

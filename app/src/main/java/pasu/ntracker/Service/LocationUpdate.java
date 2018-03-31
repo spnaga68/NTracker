@@ -990,8 +990,10 @@ public class LocationUpdate extends Service implements
                     SessionSave.setWaitingTime(finalTime, LocationUpdate.this);
                 }
             }
-            sendMessage();
-            myHandler.postDelayed(this, 1000);
+            if (!CommonData.speed_waiting_stop) {
+                sendMessage();
+                myHandler.postDelayed(this, 3000);
+            }
         }
     };
 
